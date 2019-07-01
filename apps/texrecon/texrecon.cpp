@@ -15,6 +15,7 @@
 #include <util/system.h>
 #include <util/file_system.h>
 #include <mve/mesh_io_ply.h>
+#include <mve/mesh_io_obj.h>
 
 #include "tex/util.h"
 #include "tex/timer.h"
@@ -47,20 +48,28 @@ int main(int argc, char **argv) {
     }
 
     std::string const tmp_dir = util::fs::join_path(out_dir, "tmp");
-    if (!util::fs::dir_exists(tmp_dir.c_str())) {
-        util::fs::mkdir(tmp_dir.c_str());
-    } else {
-        std::cerr
-            << "Temporary directory \"tmp\" exists within the destination directory.\n"
-            << "Cannot continue since this directory would be delete in the end.\n"
-            << std::endl;
-        std::exit(EXIT_FAILURE);
+//    if (!util::fs::dir_exists(tmp_dir.c_str())) {
+//        util::fs::mkdir(tmp_dir.c_str());
+//    } else {
+//        std::cerr
+//            << "Temporary directory \"tmp\" exists within the destination directory.\n"
+//            << "Cannot continue since this directory would be delete in the end.\n"
+//            << std::endl;
+//        std::exit(EXIT_FAILURE);
+//    }
+
+    /// (roc): always remove the tmp folder if it exists
+    if (util::fs::dir_exists(tmp_dir.c_str())) {
+        util::fs::rmdir(tmp_dir.c_str());
     }
+    util::fs::mkdir(tmp_dir.c_str());
+
 
     std::cout << "Load and prepare mesh: " << std::endl;
     mve::TriangleMesh::Ptr mesh;
     try {
-        mesh = mve::geom::load_ply_mesh(conf.in_mesh);
+//        mesh = mve::geom::load_ply_mesh(conf.in_mesh);
+        mesh = mve::geom::load_obj_mesh(conf.in_mesh);  /// (roc): load an obj mesh instead of ply
     } catch (std::exception& e) {
         std::cerr << "\tCould not load mesh: " << e.what() << std::endl;
         std::exit(EXIT_FAILURE);

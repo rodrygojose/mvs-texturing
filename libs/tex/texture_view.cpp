@@ -42,55 +42,96 @@ TextureView::TextureView(std::size_t id, mve::CameraInfo const & camera,
 void
 TextureView::generate_validity_mask(void) {
     assert(image != NULL);
+//    validity_mask.resize(width * height, true);
+//    mve::ByteImage::Ptr checked = mve::ByteImage::create(width, height, 1);
+//    mve::ByteImage::Ptr validity_img = mve::ByteImage::create(width, height, 1);
+
+//    std::list<math::Vec2i> queue;
+
+//    /* Start from the corners. */
+//    queue.push_back(math::Vec2i(0,0));
+//    checked->at(0, 0, 0) = 255;
+//    queue.push_back(math::Vec2i(0, height - 1));
+//    checked->at(0, height - 1, 0) = 255;
+//    queue.push_back(math::Vec2i(width - 1, 0));
+//    checked->at(width - 1, 0, 0) = 255;
+//    queue.push_back(math::Vec2i(width - 1, height - 1));
+//    checked->at(width - 1, height - 1, 0) = 255;
+
+//    while (!queue.empty()) {
+//        math::Vec2i pixel = queue.front();
+//        queue.pop_front();
+
+//        int const x = pixel[0];
+//        int const y = pixel[1];
+
+//        int sum = 0;
+//        for (int c = 0; c < image->channels(); ++c) {
+//            sum += image->at(x, y, c);
+//        }
+
+//        if (sum == 0) {
+//            validity_mask[x + y * width] = false;
+//            validity_img->at(x, y, 1) = 0;
+
+//            std::vector<math::Vec2i> neighbours;
+//            neighbours.push_back(math::Vec2i(x + 1, y));
+//            neighbours.push_back(math::Vec2i(x, y + 1));
+//            neighbours.push_back(math::Vec2i(x - 1, y));
+//            neighbours.push_back(math::Vec2i(x, y - 1));
+
+//            ///
+////            neighbours.push_back(math::Vec2i(x + 1, y + 1));
+////            neighbours.push_back(math::Vec2i(x + 1, y - 1));
+////            neighbours.push_back(math::Vec2i(x - 1, y + 1));
+////            neighbours.push_back(math::Vec2i(x - 1, y - 1));
+
+//            for (std::size_t i = 0; i < neighbours.size(); ++i) {
+//                math::Vec2i npixel = neighbours[i];
+//                int const nx = npixel[0];
+//                int const ny = npixel[1];
+//                if (0 <= nx && nx < width && 0 <= ny && ny < height) {
+//                    if (checked->at(nx, ny, 0) == 0) {
+//                        queue.push_front(npixel);
+//                        checked->at(nx, ny, 0) = 255;
+//                    }
+//                }
+//            }
+//        }
+////        else
+////        {
+////            validity_img->at(x, y, 1) = 255;
+////            mve::image::save_file(checked, "out_checked.png");
+////            mve::image::save_file(validity_img, "out_validity.png");
+////        }
+//    }
+
     validity_mask.resize(width * height, true);
-    mve::ByteImage::Ptr checked = mve::ByteImage::create(width, height, 1);
+//    mve::ByteImage::Ptr validity_img = mve::ByteImage::create(width, height, 1);
 
-    std::list<math::Vec2i> queue;
-
-    /* Start from the corners. */
-    queue.push_back(math::Vec2i(0,0));
-    checked->at(0, 0, 0) = 255;
-    queue.push_back(math::Vec2i(0, height - 1));
-    checked->at(0, height - 1, 0) = 255;
-    queue.push_back(math::Vec2i(width - 1, 0));
-    checked->at(width - 1, 0, 0) = 255;
-    queue.push_back(math::Vec2i(width - 1, height - 1));
-    checked->at(width - 1, height - 1, 0) = 255;
-
-    while (!queue.empty()) {
-        math::Vec2i pixel = queue.front();
-        queue.pop_front();
-
-        int const x = pixel[0];
-        int const y = pixel[1];
-
-        int sum = 0;
-        for (int c = 0; c < image->channels(); ++c) {
-            sum += image->at(x, y, c);
-        }
-
-        if (sum == 0) {
-            validity_mask[x + y * width] = false;
-
-            std::vector<math::Vec2i> neighbours;
-            neighbours.push_back(math::Vec2i(x + 1, y));
-            neighbours.push_back(math::Vec2i(x, y + 1));
-            neighbours.push_back(math::Vec2i(x - 1, y));
-            neighbours.push_back(math::Vec2i(x, y - 1));
-
-            for (std::size_t i = 0; i < neighbours.size(); ++i) {
-                math::Vec2i npixel = neighbours[i];
-                int const nx = npixel[0];
-                int const ny = npixel[1];
-                if (0 <= nx && nx < width && 0 <= ny && ny < height) {
-                    if (checked->at(nx, ny, 0) == 0) {
-                        queue.push_front(npixel);
-                        checked->at(nx, ny, 0) = 255;
-                    }
-                }
+    for (int pxl_y = 0; pxl_y < height - 1; ++pxl_y)
+    {
+        for (int pxl_x = 0; pxl_x < width - 1; ++pxl_x)
+        {
+            int sum = 0;
+            for (int c = 0; c < image->channels(); ++c) {
+                sum += image->at(pxl_x, pxl_y, c);
             }
+
+//            if (sum == 0) {
+            if (sum < 3) {
+                validity_mask[pxl_x + pxl_y * width] = false;
+//                validity_img->at(pxl_x, pxl_y, 1) = 0;
+            }
+//            else
+//            {
+//                validity_img->at(pxl_x, pxl_y, 1) = 255;
+//            }
         }
     }
+
+    /// TODO (roc) remove
+//    mve::image::save_file(validity_img, "out_validity.png");
 }
 
 void
