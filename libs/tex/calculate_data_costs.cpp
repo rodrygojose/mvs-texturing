@@ -144,11 +144,12 @@ calculate_face_projection_infos(mve::TriangleMesh::ConstPtr mesh,
     BVHTree bvh_tree(faces, vertices);
     std::cout << "done. (Took: " << timer.get_elapsed() << " ms)" << std::endl;
 
+    /// roc: for the ground floor, accept bigger angles
 //    float MAX_GRAZING_ANGLE = 75.0f;
-    float MAX_GRAZING_ANGLE = 88.0f;
+    float MAX_GRAZING_ANGLE = 85.0f;
 
     ProgressCounter view_counter("\tCalculating face qualities", num_views);
-    #pragma omp parallel // TODO (roc): enable all #pragma omp
+    #pragma omp parallel
     {
         std::vector<std::pair<std::size_t, FaceProjectionInfo> > projected_face_view_infos;
 
