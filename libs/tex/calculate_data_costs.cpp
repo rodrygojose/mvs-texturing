@@ -144,6 +144,8 @@ calculate_face_projection_infos(mve::TriangleMesh::ConstPtr mesh,
     BVHTree bvh_tree(faces, vertices);
     std::cout << "done. (Took: " << timer.get_elapsed() << " ms)" << std::endl;
 
+    const double MAX_GRAZING_ANGLE = 85.0; /// Accept bigger angles for texture slanted areas
+
     ProgressCounter view_counter("\tCalculating face qualities", num_views);
     #pragma omp parallel
     {
@@ -184,7 +186,7 @@ calculate_face_projection_infos(mve::TriangleMesh::ConstPtr mesh,
                 if (viewing_angle < 0.0f || viewing_direction.dot(view_to_face_vec) < 0.0f)
                     continue;
 
-                if (std::acos(viewing_angle) > MATH_DEG2RAD(75.0f))
+                if (std::acos(viewing_angle) > MATH_DEG2RAD(MAX_GRAZING_ANGLE))
                     continue;
 
                 /* Projects into the valid part of the TextureView? */
