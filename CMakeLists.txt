@@ -38,6 +38,7 @@ find_package(TIFF REQUIRED)
 
 add_subdirectory(elibs)
 include_directories(SYSTEM
+    ${TBB_INCLUDE_DIRS}
     ${CMAKE_SOURCE_DIR}/elibs/rayint/libs
     ${CMAKE_SOURCE_DIR}/elibs/mve/libs
     ${CMAKE_SOURCE_DIR}/elibs/eigen
