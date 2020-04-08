@@ -20,6 +20,7 @@
 #include <util/system.h>
 #include <util/file_system.h>
 #include <mve/mesh_io_ply.h>
+#include <mve/mesh_io_obj.h>
 
 #include "tex/util.h"
 #include "tex/timer.h"
@@ -52,15 +53,11 @@ int main(int argc, char **argv) {
     }
 
     std::string const tmp_dir = util::fs::join_path(out_dir, "tmp");
-    if (!util::fs::dir_exists(tmp_dir.c_str())) {
-        util::fs::mkdir(tmp_dir.c_str());
-    } else {
-        std::cerr
-            << "Temporary directory \"tmp\" exists within the destination directory.\n"
-            << "Cannot continue since this directory would be delete in the end.\n"
-            << std::endl;
-        std::exit(EXIT_FAILURE);
-    }
+
+    if (util::fs::dir_exists(tmp_dir.c_str()))
+        util::fs::rmdir(tmp_dir.c_str());
+
+    util::fs::mkdir(tmp_dir.c_str());
 
     // Set the number of threads to use.
     tbb::task_scheduler_init schedule(conf.num_threads > 0 ? conf.num_threads : tbb::task_scheduler_init::automatic);
@@ -77,9 +74,17 @@ int main(int argc, char **argv) {
     try {
         mesh = mve::geom::load_ply_mesh(conf.in_mesh);
     } catch (std::exception& e) {
-        std::cerr << "\tCould not load mesh: " << e.what() << std::endl;
-        std::exit(EXIT_FAILURE);
+        const auto first_error = e.what();
+        try {
+            mesh = mve::geom::load_obj_mesh(conf.in_mesh);
+        } catch (std::exception& e) {
+            std::cerr << "\tCould not load mesh: \n"
+                      << first_error << std::endl
+                      << e.what() << std::endl;
+            std::exit(EXIT_FAILURE);
+        }
     }
+
     mve::MeshInfo mesh_info(mesh);
     tex::prepare_mesh(&mesh_info, mesh);
 
