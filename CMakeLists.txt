@@ -46,16 +46,26 @@ include_directories(SYSTEM
     ${CMAKE_SOURCE_DIR}/elibs/mapmap/
     ${CMAKE_SOURCE_DIR}/elibs/mapmap/mapmap
     ${CMAKE_SOURCE_DIR}/elibs/mapmap/ext/dset
-)
-
-include_directories(
     libs
 )
+
 
 link_directories(
     ${CMAKE_SOURCE_DIR}/elibs/mve/libs/mve
     ${CMAKE_SOURCE_DIR}/elibs/mve/libs/util
 )
 
-add_subdirectory(libs)
-add_subdirectory(apps)
+#add_subdirectory(libs)
+#add_subdirectory(apps)
+
+
+file (GLOB HEADERS "libs/tex/*.h")
+file (GLOB SOURCES "libs/tex/[^_]*.cpp")
+
+set(LIBRARY tex)
+add_library(${LIBRARY} STATIC ${SOURCES})
+set_property(TARGET ${LIBRARY} PROPERTY INTERPROCEDURAL_OPTIMIZATION True)
+add_dependencies(${LIBRARY} ext_mve ext_rayint ext_eigen ext_mapmap)
+target_link_libraries(${LIBRARY} ${TBB_LIBRARIES} -lmve -lmve_util ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${TIFF_LIBRARIES})
+install(TARGETS ${LIBRARY} ARCHIVE DESTINATION lib)
+
