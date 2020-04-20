@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.1)
 
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/elibs/tbb")
 
-project(Texturing)
+project(MVSTexturing)
 include(ExternalProject)
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -38,34 +38,39 @@ find_package(JPEG REQUIRED)
 find_package(TIFF REQUIRED)
 
 add_subdirectory(elibs)
-include_directories(SYSTEM
-    ${TBB_INCLUDE_DIRS}
-    ${CMAKE_SOURCE_DIR}/elibs/rayint/libs
-    ${CMAKE_SOURCE_DIR}/elibs/mve/libs
-    ${CMAKE_SOURCE_DIR}/elibs/eigen
-    ${CMAKE_SOURCE_DIR}/elibs/mapmap/
-    ${CMAKE_SOURCE_DIR}/elibs/mapmap/mapmap
-    ${CMAKE_SOURCE_DIR}/elibs/mapmap/ext/dset
-    libs
-)
 
+set(MVS_TEXTURING_INCLUDE
+    ${TBB_INCLUDE_DIRS}
+    ${CMAKE_BINARY_DIR}/src/rayint/libs
+    ${CMAKE_BINARY_DIR}/src/mve/libs
+    ${CMAKE_BINARY_DIR}/src/eigen
+    ${CMAKE_BINARY_DIR}/src/mapmap/
+    ${CMAKE_BINARY_DIR}/src/mapmap/mapmap
+    ${CMAKE_BINARY_DIR}/src/mapmap/ext/dset
+    ${CMAKE_SOURCE_DIR}/libs)
+
+include_directories(SYSTEM ${MVS_TEXTURING_INCLUDE})
 
 link_directories(
-    ${CMAKE_SOURCE_DIR}/elibs/mve/libs/mve
-    ${CMAKE_SOURCE_DIR}/elibs/mve/libs/util
+    ${CMAKE_BINARY_DIR}/src/mve/libs/mve
+    ${CMAKE_BINARY_DIR}/src/mve/libs/util
 )
 
-#add_subdirectory(libs)
-#add_subdirectory(apps)
+## Roc: add all headers and .cpp from mve
+#file (GLOB HEADERS "libs/tex/*.h")
+#file (GLOB SOURCES "libs/tex/[^_]*.cpp")
+file (GLOB HEADERS "libs/tex/*.h" "${CMAKE_BINARY_DIR}/src/mve/[^_]*.h")
+file (GLOB SOURCES "libs/tex/[^_]*.cpp" "${CMAKE_BINARY_DIR}/src/mve/[^_]*.cpp")
 
-
-file (GLOB HEADERS "libs/tex/*.h")
-file (GLOB SOURCES "libs/tex/[^_]*.cpp")
-
-set(LIBRARY tex)
+set(LIBRARY mvstex)
 add_library(${LIBRARY} STATIC ${SOURCES})
 set_property(TARGET ${LIBRARY} PROPERTY INTERPROCEDURAL_OPTIMIZATION True)
-add_dependencies(${LIBRARY} ext_mve ext_rayint ext_eigen ext_mapmap)
-target_link_libraries(${LIBRARY} ${TBB_LIBRARIES} -lmve -lmve_util ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${TIFF_LIBRARIES})
-install(TARGETS ${LIBRARY} ARCHIVE DESTINATION lib)
+add_dependencies(${LIBRARY} mve rayint eigen mapmap)
+#target_link_libraries(${LIBRARY} ${TBB_LIBRARIES} -lmve -lmve_util ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${TIFF_LIBRARIES})
+target_link_libraries(${LIBRARY} ${TBB_LIBRARIES} ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${TIFF_LIBRARIES})
+#target_link_libraries(${LIBRARY} ${TBB_LIBRARIES} mve mve_util ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${TIFF_LIBRARIES})
+#install(TARGETS ${LIBRARY} ARCHIVE DESTINATION lib)
 
+##########
+
+#add_subdirectory(apps)

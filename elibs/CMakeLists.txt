@@ -1,40 +1,40 @@
-externalproject_add(ext_mapmap
-    PREFIX          ext_mapmap
+externalproject_add(mapmap
+    PREFIX          ${CMAKE_BINARY_DIR}/libs/mapmap
     GIT_REPOSITORY  https://github.com/dthuerck/mapmap_cpu.git
     GIT_TAG         master
     UPDATE_COMMAND  ""
-    SOURCE_DIR      ${CMAKE_SOURCE_DIR}/elibs/mapmap
+    SOURCE_DIR      ${CMAKE_BINARY_DIR}/src/mapmap
     CONFIGURE_COMMAND ""
     BUILD_COMMAND   ""
     INSTALL_COMMAND ""
 )
 
-externalproject_add(ext_rayint
-    PREFIX          ext_rayint
+externalproject_add(rayint
+    PREFIX          ${CMAKE_BINARY_DIR}/libs/rayint
     GIT_REPOSITORY  https://github.com/nmoehrle/rayint.git
     GIT_TAG         cuda
     UPDATE_COMMAND  ""
-    SOURCE_DIR      ${CMAKE_SOURCE_DIR}/elibs/rayint
+    SOURCE_DIR      ${CMAKE_BINARY_DIR}/src/rayint
     CONFIGURE_COMMAND ""
     BUILD_COMMAND   ""
     INSTALL_COMMAND ""
 )
 
-externalproject_add(ext_eigen
-    PREFIX          ext_eigen
+externalproject_add(eigen
+    PREFIX          ${CMAKE_BINARY_DIR}/libs/eigen
     URL             https://bitbucket.org/eigen/eigen/get/3.3.2.tar.gz
     URL_MD5         36b5731ab7d7e0c10843ac93bd9fd270
-    SOURCE_DIR      ${CMAKE_SOURCE_DIR}/elibs/eigen
+    SOURCE_DIR      ${CMAKE_BINARY_DIR}/src/eigen
     CONFIGURE_COMMAND ""
     BUILD_COMMAND   ""
     INSTALL_COMMAND ""
 )
 
-externalproject_add(ext_mve
-    PREFIX          mve
+externalproject_add(mve
+    PREFIX          ${CMAKE_BINARY_DIR}/libs/mve
     GIT_REPOSITORY  https://github.com/nmoehrle/mve.git
     UPDATE_COMMAND  ""
-    SOURCE_DIR      ${CMAKE_SOURCE_DIR}/elibs/mve
+    SOURCE_DIR      ${CMAKE_BINARY_DIR}/src/mve
     CONFIGURE_COMMAND ""
     BUILD_COMMAND   make -C libs/mve && make -C libs/util #not platform independent
     BUILD_IN_SOURCE 1
