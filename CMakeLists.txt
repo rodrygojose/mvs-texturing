@@ -1,9 +1,16 @@
 cmake_minimum_required(VERSION 3.1)
-
-LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/elibs/tbb")
-
 project(MVSTexturing)
-include(ExternalProject)
+cmake_policy(SET CMP0077 NEW)
+cmake_policy(SET CMP0069 NEW)
+
+option(MVS_TEXTURING_BUILD_STATIC "Build a static MVE TEXTURING libraries, instead of shared" ON)
+if(${MVS_TEXTURING_BUILD_STATIC})
+    set(MVE_BUILD_STATIC ON)
+else()
+    set(MVE_BUILD_STATIC OFF)
+endif(${MVS_TEXTURING_BUILD_STATIC})
+
+LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/ext_libs/tbb")
 
 if(NOT CMAKE_BUILD_TYPE)
     message(STATUS "Setting build type to 'RELWITHDEBINFO' as none was specified.")
@@ -37,40 +44,25 @@ find_package(PNG REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(TIFF REQUIRED)
 
-add_subdirectory(elibs)
+add_subdirectory(libs)
 
 set(MVS_TEXTURING_INCLUDE
+    ${CMAKE_CURRENT_SOURCE_DIR}/ext_libs/eigen #############################
     ${TBB_INCLUDE_DIRS}
-    ${CMAKE_BINARY_DIR}/src/rayint/libs
-    ${CMAKE_BINARY_DIR}/src/mve/libs
-    ${CMAKE_BINARY_DIR}/src/eigen
-    ${CMAKE_BINARY_DIR}/src/mapmap/
-    ${CMAKE_BINARY_DIR}/src/mapmap/mapmap
-    ${CMAKE_BINARY_DIR}/src/mapmap/ext/dset
-    ${CMAKE_SOURCE_DIR}/libs)
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/rayint/libs
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/mve/libs
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/mapmap/
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/mapmap/mapmap
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/mapmap/ext/dset
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs
+    ${CMAKE_CURRENT_SOURCE_DIR})
 
 include_directories(SYSTEM ${MVS_TEXTURING_INCLUDE})
 
 link_directories(
-    ${CMAKE_BINARY_DIR}/src/mve/libs/mve
-    ${CMAKE_BINARY_DIR}/src/mve/libs/util
+    ${CMAKE_CURRENT_BINARY_DIR}/libs/mve/libs/mve
+    ${CMAKE_CURRENT_BINARY_DIR}/libs/mve/libs/util
 )
 
-## Roc: add all headers and .cpp from mve
-#file (GLOB HEADERS "libs/tex/*.h")
-#file (GLOB SOURCES "libs/tex/[^_]*.cpp")
-file (GLOB HEADERS "libs/tex/*.h" "${CMAKE_BINARY_DIR}/src/mve/[^_]*.h")
-file (GLOB SOURCES "libs/tex/[^_]*.cpp" "${CMAKE_BINARY_DIR}/src/mve/[^_]*.cpp")
-
-set(LIBRARY mvstex)
-add_library(${LIBRARY} STATIC ${SOURCES})
-set_property(TARGET ${LIBRARY} PROPERTY INTERPROCEDURAL_OPTIMIZATION True)
-add_dependencies(${LIBRARY} mve rayint eigen mapmap)
-#target_link_libraries(${LIBRARY} ${TBB_LIBRARIES} -lmve -lmve_util ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${TIFF_LIBRARIES})
-target_link_libraries(${LIBRARY} ${TBB_LIBRARIES} ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${TIFF_LIBRARIES})
-#target_link_libraries(${LIBRARY} ${TBB_LIBRARIES} mve mve_util ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${TIFF_LIBRARIES})
-#install(TARGETS ${LIBRARY} ARCHIVE DESTINATION lib)
-
-##########
-
-#add_subdirectory(apps)
+add_subdirectory(tex)
+add_subdirectory(apps)

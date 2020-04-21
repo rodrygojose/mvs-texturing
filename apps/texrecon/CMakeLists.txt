@@ -1,10 +1,11 @@
 file (GLOB HEADERS "*.h")
-file (GLOB SOURCES "[^_]*.cpp")
+file (GLOB SOURCES "texrecon.cpp" "arguments.cpp")
 
 set(BIN texrecon)
 
 add_executable(${BIN} ${SOURCES})
 set_property(TARGET ${BIN} PROPERTY INTERPROCEDURAL_OPTIMIZATION True)
-add_dependencies(${BIN} ext_mve)
-target_link_libraries(${BIN} tex ${TBB_LIBRARIES} -lmve -lmve_util)
-install(TARGETS ${BIN} RUNTIME DESTINATION bin)
+
+add_dependencies(${BIN} mve)
+include_directories(${MVS_TEXTURING_INCLUDE})
+target_link_libraries(${BIN} mvstex ${TBB_LIBRARIES} -lmve -lmve_util)
