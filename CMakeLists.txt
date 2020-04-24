@@ -40,12 +40,17 @@ add_subdirectory(libs)
 add_subdirectory(tex)
 
 set(MVS_TEXTURING_INCLUDE
-    ${MVE_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}
+   ${MVE_INCLUDE_DIRS}
+   ${CMAKE_CURRENT_SOURCE_DIR}
    CACHE INTERNAL "MVS_TEXTURING_INCLUDE"
 )   
-   
+
+set(MVS_TEXTURING_LIBS_DIR
+   ${MVE_LIBS_DIR}
+   CACHE INTERNAL "MVS_TEXTURING_LIBS_DIR"
+)   
+
 include_directories(SYSTEM ${MVS_TEXTURING_INCLUDE})
-link_directories(${MVE_LIBS_DIR})
+link_directories(${MVS_TEXTURING_LIBS_DIR})
 
 add_subdirectory(apps)
