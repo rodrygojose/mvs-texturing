@@ -5,7 +5,7 @@ cmake_policy(SET CMP0069 NEW)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED yes)
-
+LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/libs/ext_libs/tbb")
 
 # option(MVS_TEXTURING_BUILD_STATIC "Build a static MVE TEXTURING libraries, instead of shared" ON)
 # if(${MVS_TEXTURING_BUILD_STATIC})
@@ -13,8 +13,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED yes)
 # else()
     # set(MVE_BUILD_STATIC OFF)
 # endif(${MVS_TEXTURING_BUILD_STATIC})
-
-LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/ext_libs/tbb")
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE RELEASE)
@@ -45,28 +43,16 @@ find_package(PNG REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(TIFF REQUIRED)
 
-add_subdirectory(elibs)
+add_subdirectory(libs)
+add_subdirectory(tex)
 
 set(MVS_TEXTURING_INCLUDE
-    ${CMAKE_CURRENT_SOURCE_DIR}/ext_libs/eigen
-    ${TBB_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/elibs/rayint/libs
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/elibs/mve
-#    ${CMAKE_BINARY_DIR}/mve/libs
-
-    ${CMAKE_CURRENT_SOURCE_DIR}/elibs/mapmap
-    ${CMAKE_CURRENT_SOURCE_DIR}/elibs/mapmap/mapmap
-    ${CMAKE_CURRENT_SOURCE_DIR}/elibs/mapmap/ext/dset
-    libs
-)
-
+    ${MVE_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+   CACHE INTERNAL "MVS_TEXTURING_INCLUDE"
+)   
+   
 include_directories(SYSTEM ${MVS_TEXTURING_INCLUDE})
+link_directories(${MVE_LIBS_DIR})
 
-link_directories(
-    ${CMAKE_BINARY_DIR}/elibs/mve/mve
-    ${CMAKE_BINARY_DIR}/elibs/mve/util
-)
-
-add_subdirectory(libs)
 add_subdirectory(apps)
