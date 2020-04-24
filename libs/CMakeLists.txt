@@ -1,11 +1,12 @@
+cmake_minimum_required(VERSION 3.1)
 include(ExternalProject)
 
-## ROC: External project is added in this way to use the
-## build command `make -C ${CMAKE_CURRENT_SOURCE_DIR}/mve/libs/mve && make -C ${CMAKE_CURRENT_SOURCE_DIR}/mve/libs/util`
-## however, 
+## ROC: External project is added to use the build command
+## `make -C ${CMAKE_CURRENT_SOURCE_DIR}/mve/libs/mve && make -C ${CMAKE_CURRENT_SOURCE_DIR}/mve/libs/util`
+## But the mve source code does not need to be downloaded
 externalproject_add(mve
    PREFIX          mve_prefix
-   GIT_REPOSITORY  https://github.com/nmoehrle/mve.git
+   # GIT_REPOSITORY  https://github.com/nmoehrle/mve.git
    UPDATE_COMMAND  ""
    SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/mve
    CONFIGURE_COMMAND ""

@@ -5,7 +5,7 @@ set(BIN texrecon)
 add_executable(${BIN} ${SOURCES})
 set_property(TARGET ${BIN} PROPERTY INTERPROCEDURAL_OPTIMIZATION True)
 
-add_dependencies(${BIN} mve)
+add_dependencies(${BIN} mvstex)
 
 include_directories(${MVE_INCLUDE_DIRS})
 link_directories(${MVE_LIBS_DIR})
