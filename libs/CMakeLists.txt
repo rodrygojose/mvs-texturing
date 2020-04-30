@@ -3,7 +3,7 @@ include(ExternalProject)
 
 set(MVE_INCLUDE_DIRS
     ${TBB_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/ext_libs/eigen/Eigen
+    ${CMAKE_CURRENT_SOURCE_DIR}/ext_libs/eigen
     ${CMAKE_CURRENT_SOURCE_DIR}/rayint/libs
     ${CMAKE_CURRENT_SOURCE_DIR}/mve/libs
     ${CMAKE_CURRENT_SOURCE_DIR}/mapmap
